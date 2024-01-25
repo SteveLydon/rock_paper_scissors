@@ -4,6 +4,16 @@ const PLAYER = "player";
 const COMPUTER = "computer";
 const TIE = "nobody";
 
+let userScore=0;
+let pcScore=0;
+
+let btnRock = document.getElementById("rock-btn");
+let btnPaper = document.getElementById("paper-btn");
+let btnScissors = document.getElementById("scissors-btn");
+let userScoreDisplay = document.getElementById("user-score");
+let pcScoreDisplay = document.getElementById("pc-score");
+let winnerDisplay = document.getElementById("winner");
+
 function getComputerChoice(){
     let choice = "rock";
     switch(Math.floor(Math.random() * 3 + 1)){
@@ -17,8 +27,9 @@ function getComputerChoice(){
     return choice;
 }
 
-function playRound(playerSelection, computerSelection){
+function playRound(playerSelection){
     let winner = TIE;
+    let computerSelection = getComputerChoice();
     switch(playerSelection.toLowerCase()){
         case "rock":
             if(computerSelection == "scissors"){
@@ -45,6 +56,8 @@ function playRound(playerSelection, computerSelection){
             }
             break;
     }
+    displayWinner(winner, playerSelection, computerSelection);
+    adjustScores(winner);
     return winner;
 }
 
@@ -56,21 +69,45 @@ function getPlayerChoice(){
     return choice;
 }
 
-function printWinner(winner, playerSelection, computerSelection){
-    console.log(`   ${winner} was the winner
-    player had ${playerSelection}
-    computer had ${computerSelection}`);
-}
-
-function playGame(){
-    let winner = TIE;
-    while(winner == TIE){
-        let computerSelection = getComputerChoice();
-        let playerSelection = getPlayerChoice();
-        winner = playRound(playerSelection,computerSelection);
-        printWinner(winner,playerSelection,computerSelection);
+function adjustScores(winner){
+    if(winner == COMPUTER){
+        pcScore +=1;
+    }
+    else if(winner == PLAYER){
+        userScore +=1;
     }
 
+    if(pcScore >= 5){
+        userScore = 0;
+        pcScore = 0;
+        winnerDisplay.textContent = COMPUTER + " has won!! Start Again!";
+    }
+    else if(userScore >= 5){
+        userScore = 0;
+        pcScore = 0;
+        winnerDisplay.textContent = PLAYER + " has won!! Start Again!";
+    }
+
+    userScoreDisplay.textContent = "Your Score: " + userScore;
+    pcScoreDisplay.textContent = "PC Score: " + pcScore;
 }
 
-playGame();
+function displayWinner(winner, playerSelection, computerSelection){
+    winnerDisplay.textContent = `${winner} was the winner, player had ${playerSelection}, computer had ${computerSelection}`;
+}
+
+btnRock.addEventListener(
+    'click', (e)=>{
+        playRound("rock");
+    }
+);
+btnPaper.addEventListener(
+    'click', (e)=>{
+        playRound("paper");
+    }
+);
+btnScissors.addEventListener(
+    'click', (e)=>{
+        playRound("scissors");
+    }
+);
